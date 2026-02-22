@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --radius: 0.5rem;
+        --background: 1 0 0;
+        --foreground: 0.15 0.01 240;
+        --card: 1 0 0;
+        --card-foreground: 0.15 0.01 240;
+        --popover: 1 0 0;
+        --popover-foreground: 0.15 0.01 240;
+        --primary: 0.45 0.12 240;
+        --primary-foreground: 0.98 0 0;
+        --secondary: 0.94 0.01 240;
+        --secondary-foreground: 0.15 0.01 240;
+        --muted: 0.96 0.005 240;
+        --muted-foreground: 0.50 0.01 240;
+        --accent: 0.55 0.10 220;
+        --accent-foreground: 0.98 0 0;
+        --destructive: 0.55 0.20 25;
+        --destructive-foreground: 0.98 0 0;
+        --border: 0.90 0.005 240;
+        --input: 0.90 0.005 240;
+        --ring: 0.45 0.12 240;
+        --chart-1: 0.60 0.20 264;
+        --chart-2: 0.55 0.16 200;
+        --chart-3: 0.50 0.14 150;
+        --chart-4: 0.65 0.18 300;
+        --chart-5: 0.70 0.16 50;
+        --sidebar: 0.98 0.005 240;
+        --sidebar-foreground: 0.15 0.01 240;
+        --sidebar-primary: 0.45 0.12 240;
+        --sidebar-primary-foreground: 0.98 0 0;
+        --sidebar-accent: 0.96 0.005 240;
+        --sidebar-accent-foreground: 0.15 0.01 240;
+        --sidebar-border: 0.90 0.005 240;
+        --sidebar-ring: 0.45 0.12 240;
+        
+        /* Pricing tier accent colors */
+        --tier-starter: 0.60 0.12 220;
+        --tier-growth: 0.55 0.14 165;
+        --tier-enterprise: 0.58 0.16 290;
+        --tier-custom: 0.62 0.12 340;
+        
+        /* Global loading screen colors - Light Mode */
+        --loader-bg: oklch(0.98 0.005 240);
+        --loader-accent: oklch(0.55 0.14 220);
+        --loader-accent-glow: oklch(0.55 0.14 220 / 0.3);
+        --loader-text: oklch(0.45 0.02 240);
+    }
+
+    .dark {
+        --background: 0.12 0.02 264;
+        --foreground: 0.98 0 0;
+        --card: 0.16 0.02 264;
+        --card-foreground: 0.98 0 0;
+        --popover: 0.18 0.02 264;
+        --popover-foreground: 0.98 0 0;
+        --primary: 0.65 0.22 264;
+        --primary-foreground: 0.12 0 0;
+        --secondary: 0.22 0.05 264;
+        --secondary-foreground: 0.98 0 0;
+        --muted: 0.22 0.02 264;
+        --muted-foreground: 0.65 0.01 264;
+        --accent: 0.35 0.15 200;
+        --accent-foreground: 0.98 0 0;
+        --destructive: 0.55 0.25 25;
+        --destructive-foreground: 0.98 0 0;
+        --border: 0.25 0.02 264;
+        --input: 0.25 0.02 264;
+        --ring: 0.65 0.22 264;
+        --chart-1: 0.60 0.24 264;
+        --chart-2: 0.55 0.20 200;
+        --chart-3: 0.50 0.18 150;
+        --chart-4: 0.65 0.22 300;
+        --chart-5: 0.70 0.20 50;
+        --sidebar: 0.16 0.02 264;
+        --sidebar-foreground: 0.98 0 0;
+        --sidebar-primary: 0.65 0.22 264;
+        --sidebar-primary-foreground: 0.98 0 0;
+        --sidebar-accent: 0.22 0.02 264;
+        --sidebar-accent-foreground: 0.98 0 0;
+        --sidebar-border: 0.25 0.02 264;
+        --sidebar-ring: 0.65 0.22 264;
+        
+        /* Pricing tier accent colors - dark mode */
+        --tier-starter: 0.65 0.16 220;
+        --tier-growth: 0.60 0.18 165;
+        --tier-enterprise: 0.63 0.20 290;
+        --tier-custom: 0.67 0.16 340;
+        
+        /* Global loading screen colors - Dark Mode */
+        --loader-bg: oklch(0.14 0.03 264);
+        --loader-accent: oklch(0.65 0.18 220);
+        --loader-accent-glow: oklch(0.65 0.18 220 / 0.4);
+        --loader-text: oklch(0.75 0.02 240);
+    }
+
+    * {
+        @apply border-border;
+    }
+    
+    body {
+        @apply bg-background text-foreground;
+        font-feature-settings: "rlig" 1, "calt" 1;
+        transition: background-color 200ms ease-in-out, color 200ms ease-in-out;
+    }
+}
+
+/* Custom animations for global loading screen */
+@keyframes spin-slow {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spin-reverse {
+    from {
+        transform: rotate(360deg);
+    }
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+@layer utilities {
+    .animate-spin-slow {
+        animation: spin-slow 3s linear infinite;
+    }
+    
+    .animate-spin-reverse {
+        animation: spin-reverse 2s linear infinite;
+    }
+    
+    /* Respect reduced motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+        .animate-spin-slow,
+        .animate-spin-reverse {
+            animation: none;
+        }
+        
+        .animate-pulse {
+            animation: none;
+        }
+        
+        /* Static fade for skeleton loaders */
+        .animate-pulse {
+            opacity: 0.5;
+        }
+        
+        body {
+            transition: none;
+        }
+    }
+}
