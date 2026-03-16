@@ -1,4 +1,4 @@
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Dashboard Widget Skeleton
 export function DashboardWidgetSkeleton() {
@@ -51,7 +51,7 @@ export function BillingSummarySkeleton() {
       <Skeleton className="h-px w-full" />
       <div className="grid md:grid-cols-3 gap-6">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="flex items-start space-x-3">
+          <div key={`row-${i}`} className="flex items-start space-x-3">
             <Skeleton className="h-5 w-5 rounded mt-0.5" />
             <div className="space-y-2 flex-1">
               <Skeleton className="h-4 w-28" />
@@ -69,7 +69,10 @@ export function ActivityLogSkeleton() {
   return (
     <div className="space-y-3">
       {[1, 2, 3, 4].map((i) => (
-        <div key={i} className="flex items-start space-x-3 p-3 border border-border rounded-lg">
+        <div
+          key={`row-${i}`}
+          className="flex items-start space-x-3 p-3 border border-border rounded-lg"
+        >
           <Skeleton className="h-10 w-10 rounded-full" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-3/4" />
@@ -85,8 +88,8 @@ export function ActivityLogSkeleton() {
 export function CardContentSkeleton({ rows = 3 }: { rows?: number }) {
   return (
     <div className="space-y-3">
-      {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="space-y-2">
+      {Array.from({ length: rows }, (_, i) => (
+        <div key={`skeleton-row-${i}`} className="space-y-2">
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-5/6" />
         </div>
@@ -111,7 +114,7 @@ export function BillingRecordSkeleton() {
       <Skeleton className="h-px w-full" />
       <div className="grid md:grid-cols-3 gap-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="flex items-start space-x-2">
+          <div key={`row-${i}`} className="flex items-start space-x-2">
             <Skeleton className="h-4 w-4 rounded mt-0.5" />
             <div className="space-y-2 flex-1">
               <Skeleton className="h-4 w-24" />

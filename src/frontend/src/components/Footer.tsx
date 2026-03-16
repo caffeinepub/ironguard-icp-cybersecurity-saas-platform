@@ -1,4 +1,4 @@
-import { Heart } from 'lucide-react';
+import { Heart } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -19,9 +19,24 @@ export default function Footer() {
             </a>
           </div>
           <div className="flex items-center space-x-6 text-sm text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-foreground transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-foreground transition-colors">Contact</a>
+            <a
+              href="/privacy-policy"
+              className="hover:text-foreground transition-colors"
+            >
+              Privacy Policy
+            </a>
+            <a
+              href="/privacy-policy"
+              className="hover:text-foreground transition-colors"
+            >
+              Terms of Service
+            </a>
+            <a
+              href="/terms"
+              className="hover:text-foreground transition-colors"
+            >
+              Contact
+            </a>
           </div>
         </div>
       </div>

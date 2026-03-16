@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IronGuard ICP - Enterprise Data Security Platform</title>
+    <meta name="description" content="Secure your enterprise data with IronGuard ICP - Advanced encryption, compliance, and data protection on the Internet Computer." />
+    
+    <!-- Theme initialization script - runs before page render to prevent flicker -->
+    <script>
+      (function() {
+        try {
+          const storageKey = 'ironguard-theme';
+          const theme = localStorage.getItem(storageKey);
+          const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          
+          // Apply theme immediately before first paint
+          if (theme === 'dark' || (theme === 'system' && systemTheme === 'dark') || (!theme && systemTheme === 'dark')) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {
+          console.error('Theme initialization error:', e);
+        }
+      })();
+    </script>
+    <script type="module" crossorigin src="/assets/index-C8k-UmUk.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Bfz5SgTU.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

@@ -1,15 +1,19 @@
-import { Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { Button } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
-import { useSaveThemePreference, useGetThemePreference } from '../hooks/useQueries';
-import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { Button } from "@/components/ui/button";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+import { useInternetIdentity } from "../hooks/useInternetIdentity";
+import {
+  useGetThemePreference,
+  useSaveThemePreference,
+} from "../hooks/useQueries";
 
 export default function ThemeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const { identity } = useInternetIdentity();
   const saveThemePreference = useSaveThemePreference();
-  const { data: backendTheme, isSuccess: backendThemeLoaded } = useGetThemePreference();
+  const { data: backendTheme, isSuccess: backendThemeLoaded } =
+    useGetThemePreference();
   const [mounted, setMounted] = useState(false);
   const [syncedBackendTheme, setSyncedBackendTheme] = useState(false);
 
@@ -22,13 +26,21 @@ export default function ThemeToggle() {
   useEffect(() => {
     if (identity && backendThemeLoaded && backendTheme && !syncedBackendTheme) {
       // Only sync if backend theme differs from current theme
-      const currentTheme = theme === 'system' ? resolvedTheme : theme;
+      const currentTheme = theme === "system" ? resolvedTheme : theme;
       if (backendTheme !== currentTheme) {
         setTheme(backendTheme);
       }
       setSyncedBackendTheme(true);
     }
-  }, [backendTheme, backendThemeLoaded, identity, syncedBackendTheme, theme, resolvedTheme, setTheme]);
+  }, [
+    backendTheme,
+    backendThemeLoaded,
+    identity,
+    syncedBackendTheme,
+    theme,
+    resolvedTheme,
+    setTheme,
+  ]);
 
   // Reset sync flag when user logs out
   useEffect(() => {
@@ -39,9 +51,9 @@ export default function ThemeToggle() {
 
   const toggleTheme = () => {
     // Get the actual resolved theme (light or dark)
-    const currentResolvedTheme = theme === 'system' ? resolvedTheme : theme;
-    const newTheme = currentResolvedTheme === 'dark' ? 'light' : 'dark';
-    
+    const currentResolvedTheme = theme === "system" ? resolvedTheme : theme;
+    const newTheme = currentResolvedTheme === "dark" ? "light" : "dark";
+
     // Immediately update local theme
     setTheme(newTheme);
 
@@ -49,7 +61,7 @@ export default function ThemeToggle() {
     if (identity) {
       saveThemePreference.mutate(newTheme, {
         onError: (error) => {
-          console.error('Failed to save theme preference to backend:', error);
+          console.error("Failed to save theme preference to backend:", error);
         },
       });
     }

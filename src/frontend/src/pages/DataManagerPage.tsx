@@ -1,36 +1,54 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Upload, Download, Trash2, FileText, Lock, AlertCircle } from 'lucide-react';
-import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { 
-  useGetCallerBusinessProfile, 
-  useGetBusinessFiles, 
-  useSaveBusinessFileMetadata, 
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
+import { useNavigate } from "@tanstack/react-router";
+import {
+  AlertCircle,
+  Download,
+  FileText,
+  Lock,
+  Trash2,
+  Upload,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { BillingStatus, ExternalBlob } from "../backend";
+import type { FileMetadata } from "../backend";
+import BillingAlert from "../components/BillingAlert";
+import DashboardSidebar from "../components/DashboardSidebar";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
+import { DataTableRowSkeleton } from "../components/SkeletonLoader";
+import { useInternetIdentity } from "../hooks/useInternetIdentity";
+import {
   useDeleteFileMetadata,
-  useGetCustomerBillingStatus 
-} from '../hooks/useQueries';
-import { ExternalBlob, BillingStatus } from '../backend';
-import type { FileMetadata } from '../backend';
-import { toast } from 'sonner';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import DashboardSidebar from '../components/DashboardSidebar';
-import BillingAlert from '../components/BillingAlert';
-import { DataTableRowSkeleton } from '../components/SkeletonLoader';
+  useGetBusinessFiles,
+  useGetCallerBusinessProfile,
+  useGetCustomerBillingStatus,
+  useSaveBusinessFileMetadata,
+} from "../hooks/useQueries";
 
 export default function DataManagerPage() {
   const navigate = useNavigate();
   const { identity } = useInternetIdentity();
-  const { data: profile, isLoading: profileLoading, isFetched } = useGetCallerBusinessProfile();
+  const {
+    data: profile,
+    isLoading: profileLoading,
+    isFetched,
+  } = useGetCallerBusinessProfile();
   const { data: billingStatus } = useGetCustomerBillingStatus();
-  const businessId = identity?.getPrincipal().toString() || '';
-  const { data: files = [], isLoading: filesLoading } = useGetBusinessFiles(businessId);
+  const businessId = identity?.getPrincipal().toString() || "";
+  const { data: files = [], isLoading: filesLoading } =
+    useGetBusinessFiles(businessId);
   const saveFile = useSaveBusinessFileMetadata();
   const deleteFile = useDeleteFileMetadata();
 
@@ -40,17 +58,17 @@ export default function DataManagerPage() {
 
   useEffect(() => {
     if (!identity) {
-      navigate({ to: '/auth' });
+      navigate({ to: "/auth" });
       return;
     }
 
     if (isFetched && !profile) {
-      navigate({ to: '/onboarding' });
+      navigate({ to: "/onboarding" });
     }
   }, [identity, profile, isFetched, navigate]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+    if (e.target.files?.[0]) {
       setSelectedFile(e.target.files[0]);
     }
   };
@@ -60,7 +78,9 @@ export default function DataManagerPage() {
 
     // Check if service is restricted
     if (billingStatus === BillingStatus.restricted) {
-      toast.error('Upload disabled: Service restricted due to payment issues. Please update your payment method.');
+      toast.error(
+        "Upload disabled: Service restricted due to payment issues. Please update your payment method.",
+      );
       return;
     }
 
@@ -70,10 +90,12 @@ export default function DataManagerPage() {
     try {
       const arrayBuffer = await selectedFile.arrayBuffer();
       const uint8Array = new Uint8Array(arrayBuffer);
-      
-      const blob = ExternalBlob.fromBytes(uint8Array).withUploadProgress((percentage) => {
-        setUploadProgress(percentage);
-      });
+
+      const blob = ExternalBlob.fromBytes(uint8Array).withUploadProgress(
+        (percentage) => {
+          setUploadProgress(percentage);
+        },
+      );
 
       const fileMetadata: FileMetadata = {
         id: `file-${Date.now()}-${Math.random().toString(36).substring(7)}`,
@@ -84,19 +106,21 @@ export default function DataManagerPage() {
       };
 
       await saveFile.mutateAsync({ businessId, file: fileMetadata });
-      
-      toast.success('File uploaded successfully!');
+
+      toast.success("File uploaded successfully!");
       setSelectedFile(null);
       setUploadProgress(0);
-      
-      const fileInput = document.getElementById('file-upload') as HTMLInputElement;
-      if (fileInput) fileInput.value = '';
+
+      const fileInput = document.getElementById(
+        "file-upload",
+      ) as HTMLInputElement;
+      if (fileInput) fileInput.value = "";
     } catch (error: any) {
-      console.error('Upload error:', error);
-      if (error.message && error.message.includes('restricted')) {
-        toast.error('Upload failed: Service restricted due to payment issues.');
+      console.error("Upload error:", error);
+      if (error.message?.includes("restricted")) {
+        toast.error("Upload failed: Service restricted due to payment issues.");
       } else {
-        toast.error('Failed to upload file. Please try again.');
+        toast.error("Failed to upload file. Please try again.");
       }
     } finally {
       setIsUploading(false);
@@ -108,17 +132,17 @@ export default function DataManagerPage() {
       const bytes = await file.blob.getBytes();
       const blob = new Blob([bytes]);
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = file.name;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      toast.success('File downloaded successfully!');
+      toast.success("File downloaded successfully!");
     } catch (error) {
-      console.error('Download error:', error);
-      toast.error('Failed to download file');
+      console.error("Download error:", error);
+      toast.error("Failed to download file");
     }
   };
 
@@ -127,10 +151,10 @@ export default function DataManagerPage() {
 
     try {
       await deleteFile.mutateAsync({ id: file.id, businessId });
-      toast.success('File deleted successfully!');
+      toast.success("File deleted successfully!");
     } catch (error) {
-      console.error('Delete error:', error);
-      toast.error('Failed to delete file');
+      console.error("Delete error:", error);
+      toast.error("Failed to delete file");
     }
   };
 
@@ -156,10 +180,10 @@ export default function DataManagerPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      
+
       <div className="flex-1 flex">
         <DashboardSidebar />
-        
+
         <main className="flex-1 p-8 overflow-auto">
           <div className="max-w-7xl mx-auto space-y-8">
             {/* Billing Alert */}
@@ -177,7 +201,8 @@ export default function DataManagerPage() {
               <CardHeader>
                 <CardTitle>Upload Encrypted File</CardTitle>
                 <CardDescription>
-                  Files are encrypted client-side before upload. Only you can decrypt them.
+                  Files are encrypted client-side before upload. Only you can
+                  decrypt them.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -185,7 +210,9 @@ export default function DataManagerPage() {
                   <Alert className="border-destructive bg-destructive/10">
                     <AlertCircle className="h-4 w-4 text-destructive" />
                     <AlertDescription>
-                      File uploads are disabled due to service restriction. Please update your payment method to restore upload functionality.
+                      File uploads are disabled due to service restriction.
+                      Please update your payment method to restore upload
+                      functionality.
                     </AlertDescription>
                   </Alert>
                 )}
@@ -227,13 +254,13 @@ export default function DataManagerPage() {
                   </div>
                 )}
 
-                <Button 
-                  onClick={handleUpload} 
+                <Button
+                  onClick={handleUpload}
                   disabled={!selectedFile || isUploading || isRestricted}
                   className="w-full"
                 >
                   <Upload className="mr-2 h-4 w-4" />
-                  {isUploading ? 'Uploading...' : 'Upload File'}
+                  {isUploading ? "Uploading..." : "Upload File"}
                 </Button>
               </CardContent>
             </Card>
@@ -256,7 +283,9 @@ export default function DataManagerPage() {
                 ) : files.length === 0 ? (
                   <div className="text-center py-12">
                     <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground mb-2">No files uploaded yet</p>
+                    <p className="text-muted-foreground mb-2">
+                      No files uploaded yet
+                    </p>
                     <p className="text-sm text-muted-foreground">
                       Upload your first encrypted file to get started
                     </p>
@@ -273,7 +302,10 @@ export default function DataManagerPage() {
                           <div>
                             <p className="font-medium">{file.name}</p>
                             <p className="text-sm text-muted-foreground">
-                              {(Number(file.sizeBytes) / 1024 / 1024).toFixed(2)} MB
+                              {(Number(file.sizeBytes) / 1024 / 1024).toFixed(
+                                2,
+                              )}{" "}
+                              MB
                             </p>
                           </div>
                         </div>

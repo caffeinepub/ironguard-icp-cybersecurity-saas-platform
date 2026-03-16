@@ -1,17 +1,23 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Key, Lock, Eye, EyeOff, Copy, Plus } from 'lucide-react';
-import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useGetCallerBusinessProfile } from '../hooks/useQueries';
-import { toast } from 'sonner';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import DashboardSidebar from '../components/DashboardSidebar';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useNavigate } from "@tanstack/react-router";
+import { Copy, Eye, EyeOff, Key, Lock, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import DashboardSidebar from "../components/DashboardSidebar";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
+import { useInternetIdentity } from "../hooks/useInternetIdentity";
+import { useGetCallerBusinessProfile } from "../hooks/useQueries";
 
 type KeyEntry = {
   id: string;
@@ -24,27 +30,31 @@ type KeyEntry = {
 export default function KeyVaultPage() {
   const navigate = useNavigate();
   const { identity } = useInternetIdentity();
-  const { data: profile, isLoading: profileLoading, isFetched } = useGetCallerBusinessProfile();
-  
+  const {
+    data: profile,
+    isLoading: profileLoading,
+    isFetched,
+  } = useGetCallerBusinessProfile();
+
   const [keys, setKeys] = useState<KeyEntry[]>([]);
   const [showKey, setShowKey] = useState<Record<string, boolean>>({});
   const [addingKey, setAddingKey] = useState(false);
-  const [newKey, setNewKey] = useState({ name: '', key: '', metadata: '' });
+  const [newKey, setNewKey] = useState({ name: "", key: "", metadata: "" });
 
   useEffect(() => {
     if (!identity) {
-      navigate({ to: '/auth' });
+      navigate({ to: "/auth" });
       return;
     }
 
     if (isFetched && !profile) {
-      navigate({ to: '/onboarding' });
+      navigate({ to: "/onboarding" });
     }
   }, [identity, profile, isFetched, navigate]);
 
   const handleAddKey = () => {
     if (!newKey.name || !newKey.key) {
-      toast.error('Please provide a name and key');
+      toast.error("Please provide a name and key");
       return;
     }
 
@@ -57,14 +67,14 @@ export default function KeyVaultPage() {
     };
 
     setKeys([...keys, entry]);
-    setNewKey({ name: '', key: '', metadata: '' });
+    setNewKey({ name: "", key: "", metadata: "" });
     setAddingKey(false);
-    toast.success('Key added to vault successfully!');
+    toast.success("Key added to vault successfully!");
   };
 
   const handleCopyKey = (key: string) => {
     navigator.clipboard.writeText(atob(key));
-    toast.success('Key copied to clipboard');
+    toast.success("Key copied to clipboard");
   };
 
   const toggleShowKey = (id: string) => {
@@ -89,10 +99,10 @@ export default function KeyVaultPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      
+
       <div className="flex-1 flex">
         <DashboardSidebar />
-        
+
         <main className="flex-1 p-8 overflow-auto">
           <div className="max-w-7xl mx-auto space-y-8">
             <div className="flex items-center justify-between">
@@ -123,7 +133,9 @@ export default function KeyVaultPage() {
                     <Input
                       id="keyName"
                       value={newKey.name}
-                      onChange={(e) => setNewKey({ ...newKey, name: e.target.value })}
+                      onChange={(e) =>
+                        setNewKey({ ...newKey, name: e.target.value })
+                      }
                       placeholder="e.g., Production API Key"
                     />
                   </div>
@@ -132,7 +144,9 @@ export default function KeyVaultPage() {
                     <Textarea
                       id="keyValue"
                       value={newKey.key}
-                      onChange={(e) => setNewKey({ ...newKey, key: e.target.value })}
+                      onChange={(e) =>
+                        setNewKey({ ...newKey, key: e.target.value })
+                      }
                       placeholder="Enter your key or secret"
                       rows={3}
                     />
@@ -142,13 +156,18 @@ export default function KeyVaultPage() {
                     <Input
                       id="keyMetadata"
                       value={newKey.metadata}
-                      onChange={(e) => setNewKey({ ...newKey, metadata: e.target.value })}
+                      onChange={(e) =>
+                        setNewKey({ ...newKey, metadata: e.target.value })
+                      }
                       placeholder="Additional information"
                     />
                   </div>
                   <div className="flex space-x-2">
                     <Button onClick={handleAddKey}>Add Key</Button>
-                    <Button variant="outline" onClick={() => setAddingKey(false)}>
+                    <Button
+                      variant="outline"
+                      onClick={() => setAddingKey(false)}
+                    >
                       Cancel
                     </Button>
                   </div>
@@ -161,7 +180,8 @@ export default function KeyVaultPage() {
               <CardHeader>
                 <CardTitle>Stored Keys</CardTitle>
                 <CardDescription>
-                  {keys.length} encrypted key{keys.length !== 1 ? 's' : ''} in vault
+                  {keys.length} encrypted key{keys.length !== 1 ? "s" : ""} in
+                  vault
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -186,7 +206,9 @@ export default function KeyVaultPage() {
                             <div>
                               <p className="font-medium">{key.name}</p>
                               {key.metadata && (
-                                <p className="text-sm text-muted-foreground">{key.metadata}</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {key.metadata}
+                                </p>
                               )}
                             </div>
                           </div>

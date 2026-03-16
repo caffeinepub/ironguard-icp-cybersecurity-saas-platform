@@ -1,29 +1,39 @@
-import { useEffect } from 'react';
-import { useNavigate } from '@tanstack/react-router';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Settings, Shield, Bell, User } from 'lucide-react';
-import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useGetCallerBusinessProfile } from '../hooks/useQueries';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import DashboardSidebar from '../components/DashboardSidebar';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { useNavigate } from "@tanstack/react-router";
+import { Bell, Settings, Shield, User } from "lucide-react";
+import { useEffect } from "react";
+import DashboardSidebar from "../components/DashboardSidebar";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
+import { useInternetIdentity } from "../hooks/useInternetIdentity";
+import { useGetCallerBusinessProfile } from "../hooks/useQueries";
 
 export default function SettingsPage() {
   const navigate = useNavigate();
   const { identity } = useInternetIdentity();
-  const { data: profile, isLoading: profileLoading, isFetched } = useGetCallerBusinessProfile();
+  const {
+    data: profile,
+    isLoading: profileLoading,
+    isFetched,
+  } = useGetCallerBusinessProfile();
 
   useEffect(() => {
     if (!identity) {
-      navigate({ to: '/auth' });
+      navigate({ to: "/auth" });
       return;
     }
 
     if (isFetched && !profile) {
-      navigate({ to: '/onboarding' });
+      navigate({ to: "/onboarding" });
     }
   }, [identity, profile, isFetched, navigate]);
 
@@ -47,10 +57,10 @@ export default function SettingsPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      
+
       <div className="flex-1 flex">
         <DashboardSidebar />
-        
+
         <main className="flex-1 p-8 overflow-auto">
           <div className="max-w-4xl mx-auto space-y-8">
             <div>
@@ -72,11 +82,15 @@ export default function SettingsPage() {
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-muted-foreground">Business Name</Label>
+                    <Label className="text-muted-foreground">
+                      Business Name
+                    </Label>
                     <p className="font-medium">{profile.businessName}</p>
                   </div>
                   <div>
-                    <Label className="text-muted-foreground">Contact Email</Label>
+                    <Label className="text-muted-foreground">
+                      Contact Email
+                    </Label>
                     <p className="font-medium">{profile.contactEmail}</p>
                   </div>
                   <div>
@@ -84,7 +98,9 @@ export default function SettingsPage() {
                     <p className="font-medium">{profile.industry}</p>
                   </div>
                   <div>
-                    <Label className="text-muted-foreground">Company Size</Label>
+                    <Label className="text-muted-foreground">
+                      Company Size
+                    </Label>
                     <p className="font-medium">{profile.size}</p>
                   </div>
                 </div>
@@ -99,7 +115,9 @@ export default function SettingsPage() {
                   <Shield className="h-5 w-5" />
                   <span>Security Settings</span>
                 </CardTitle>
-                <CardDescription>Manage your security preferences</CardDescription>
+                <CardDescription>
+                  Manage your security preferences
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -139,7 +157,9 @@ export default function SettingsPage() {
                   <Bell className="h-5 w-5" />
                   <span>Notifications</span>
                 </CardTitle>
-                <CardDescription>Configure your notification preferences</CardDescription>
+                <CardDescription>
+                  Configure your notification preferences
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -176,7 +196,9 @@ export default function SettingsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Your Principal ID</CardTitle>
-                <CardDescription>Your unique Internet Computer identity</CardDescription>
+                <CardDescription>
+                  Your unique Internet Computer identity
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="p-3 bg-muted rounded font-mono text-sm break-all">

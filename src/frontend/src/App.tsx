@@ -1,21 +1,26 @@
-import { RouterProvider, createRouter, createRoute, createRootRoute } from '@tanstack/react-router';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from 'next-themes';
-import { Toaster } from '@/components/ui/sonner';
-import LandingPage from './pages/LandingPage';
-import PricingPage from './pages/PricingPage';
-import AuthPage from './pages/AuthPage';
-import DashboardPage from './pages/DashboardPage';
-import DataManagerPage from './pages/DataManagerPage';
-import BillingCenterPage from './pages/BillingCenterPage';
-import KeyVaultPage from './pages/KeyVaultPage';
-import SettingsPage from './pages/SettingsPage';
-import SupportPage from './pages/SupportPage';
-import AdminPage from './pages/AdminPage';
-import PaymentSuccessPage from './pages/PaymentSuccessPage';
-import PaymentFailurePage from './pages/PaymentFailurePage';
-import OnboardingPage from './pages/OnboardingPage';
-import AppLayout from './components/AppLayout';
+import { Toaster } from "@/components/ui/sonner";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  RouterProvider,
+  createRootRoute,
+  createRoute,
+  createRouter,
+} from "@tanstack/react-router";
+import { ThemeProvider } from "next-themes";
+import AppLayout from "./components/AppLayout";
+import AdminPage from "./pages/AdminPage";
+import AuthPage from "./pages/AuthPage";
+import BillingCenterPage from "./pages/BillingCenterPage";
+import DashboardPage from "./pages/DashboardPage";
+import DataManagerPage from "./pages/DataManagerPage";
+import KeyVaultPage from "./pages/KeyVaultPage";
+import LandingPage from "./pages/LandingPage";
+import OnboardingPage from "./pages/OnboardingPage";
+import PaymentFailurePage from "./pages/PaymentFailurePage";
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import PricingPage from "./pages/PricingPage";
+import SettingsPage from "./pages/SettingsPage";
+import SupportPage from "./pages/SupportPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,79 +37,79 @@ const rootRoute = createRootRoute({
 
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/',
+  path: "/",
   component: LandingPage,
 });
 
 const pricingRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/pricing',
+  path: "/pricing",
   component: PricingPage,
 });
 
 const authRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/auth',
+  path: "/auth",
   component: AuthPage,
 });
 
 const onboardingRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/onboarding',
+  path: "/onboarding",
   component: OnboardingPage,
 });
 
 const dashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/dashboard',
+  path: "/dashboard",
   component: DashboardPage,
 });
 
 const dataManagerRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/data-manager',
+  path: "/data-manager",
   component: DataManagerPage,
 });
 
 const billingRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/billing',
+  path: "/billing",
   component: BillingCenterPage,
 });
 
 const keyVaultRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/key-vault',
+  path: "/key-vault",
   component: KeyVaultPage,
 });
 
 const settingsRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/settings',
+  path: "/settings",
   component: SettingsPage,
 });
 
 const supportRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/support',
+  path: "/support",
   component: SupportPage,
 });
 
 const adminRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/admin',
+  path: "/admin",
   component: AdminPage,
 });
 
 const paymentSuccessRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/payment-success',
+  path: "/payment-success",
   component: PaymentSuccessPage,
 });
 
 const paymentFailureRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/payment-failure',
+  path: "/payment-failure",
   component: PaymentFailurePage,
 });
 
@@ -126,7 +131,7 @@ const routeTree = rootRoute.addChildren([
 
 const router = createRouter({ routeTree });
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }
@@ -135,9 +140,9 @@ declare module '@tanstack/react-router' {
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider 
-        attribute="class" 
-        defaultTheme="system" 
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
         enableSystem
         storageKey="ironguard-theme"
         disableTransitionOnChange={false}

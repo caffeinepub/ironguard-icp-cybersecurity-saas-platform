@@ -1,5 +1,5 @@
-import { Outlet } from '@tanstack/react-router';
-import GlobalLoadingScreen from './GlobalLoadingScreen';
+import { Outlet } from "@tanstack/react-router";
+import GlobalLoadingScreen from "./GlobalLoadingScreen";
 
 export default function AppLayout() {
   return (

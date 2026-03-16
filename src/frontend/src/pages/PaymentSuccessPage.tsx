@@ -1,15 +1,21 @@
-import { Link } from '@tanstack/react-router';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle } from 'lucide-react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Link } from "@tanstack/react-router";
+import { CheckCircle } from "lucide-react";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
 
 export default function PaymentSuccessPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      
+
       <main className="flex-1 flex items-center justify-center py-20">
         <div className="container max-w-md">
           <Card className="border-green-500/50">
@@ -25,13 +31,12 @@ export default function PaymentSuccessPage() {
             <CardContent className="space-y-4">
               <div className="p-4 bg-muted rounded-lg space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  Thank you for your payment. Your account has been upgraded and you now have access to all features.
+                  Thank you for your payment. Your account has been upgraded and
+                  you now have access to all features.
                 </p>
               </div>
               <Link to="/dashboard">
-                <Button className="w-full">
-                  Go to Dashboard
-                </Button>
+                <Button className="w-full">Go to Dashboard</Button>
               </Link>
             </CardContent>
           </Card>

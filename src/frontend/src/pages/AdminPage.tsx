@@ -1,124 +1,164 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Users, 
-  Database, 
-  Shield, 
-  Settings as SettingsIcon, 
-  CheckCircle2, 
-  XCircle, 
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { useNavigate } from "@tanstack/react-router";
+import {
   AlertTriangle,
+  CheckCircle2,
   Clock,
-  RefreshCw
-} from 'lucide-react';
-import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { 
-  useIsCallerAdmin, 
-  useGetAllBusinessProfiles, 
-  useIsStripeConfigured, 
-  useSetStripeConfiguration,
+  Database,
+  RefreshCw,
+  Settings as SettingsIcon,
+  Shield,
+  Users,
+  XCircle,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { BillingStatus } from "../backend";
+import type { StripeConfiguration } from "../backend";
+import DashboardSidebar from "../components/DashboardSidebar";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
+import {
+  BillingRecordSkeleton,
+  DashboardWidgetSkeleton,
+} from "../components/SkeletonLoader";
+import { useInternetIdentity } from "../hooks/useInternetIdentity";
+import {
   useGetAllBillingRecords,
-  useManuallySetBillingStatus
-} from '../hooks/useQueries';
-import { toast } from 'sonner';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import DashboardSidebar from '../components/DashboardSidebar';
-import { BillingStatus } from '../backend';
-import type { StripeConfiguration } from '../backend';
-import { BillingRecordSkeleton, DashboardWidgetSkeleton } from '../components/SkeletonLoader';
+  useGetAllBusinessProfiles,
+  useIsCallerAdmin,
+  useIsStripeConfigured,
+  useManuallySetBillingStatus,
+  useSetStripeConfiguration,
+} from "../hooks/useQueries";
 
 export default function AdminPage() {
   const navigate = useNavigate();
   const { identity } = useInternetIdentity();
   const { data: isAdmin, isLoading: adminLoading } = useIsCallerAdmin();
-  const { data: businesses = [], isLoading: businessesLoading } = useGetAllBusinessProfiles();
+  const { data: businesses = [], isLoading: businessesLoading } =
+    useGetAllBusinessProfiles();
   const { data: stripeConfigured } = useIsStripeConfigured();
-  const { data: billingRecords = [], isLoading: billingLoading } = useGetAllBillingRecords();
+  const { data: billingRecords = [], isLoading: billingLoading } =
+    useGetAllBillingRecords();
   const setStripeConfig = useSetStripeConfiguration();
   const manuallySetStatus = useManuallySetBillingStatus();
 
   const [showStripeSetup, setShowStripeSetup] = useState(false);
-  const [stripeKey, setStripeKey] = useState('');
-  const [allowedCountries, setAllowedCountries] = useState('US,CA,GB,AU,DE,FR,IT,ES,NL,SE,NO,DK,FI,IE,BE,AT,CH,PT,PL,CZ,HU,RO,GR,BG,HR,SK,SI,LT,LV,EE,CY,MT,LU');
+  const [stripeKey, setStripeKey] = useState("");
+  const [allowedCountries, setAllowedCountries] = useState(
+    "US,CA,GB,AU,DE,FR,IT,ES,NL,SE,NO,DK,FI,IE,BE,AT,CH,PT,PL,CZ,HU,RO,GR,BG,HR,SK,SI,LT,LV,EE,CY,MT,LU",
+  );
 
   useEffect(() => {
     if (!identity) {
-      navigate({ to: '/auth' });
+      navigate({ to: "/auth" });
       return;
     }
 
     if (!adminLoading && !isAdmin) {
-      navigate({ to: '/dashboard' });
-      toast.error('Access denied: Admin privileges required');
+      navigate({ to: "/dashboard" });
+      toast.error("Access denied: Admin privileges required");
     }
   }, [identity, isAdmin, adminLoading, navigate]);
 
   const handleStripeSetup = async () => {
     if (!stripeKey) {
-      toast.error('Please enter a Stripe secret key');
+      toast.error("Please enter a Stripe secret key");
       return;
     }
 
-    if (!stripeKey.startsWith('sk_test_') && !stripeKey.startsWith('sk_live_')) {
-      toast.error('Invalid Stripe secret key format');
+    if (
+      !stripeKey.startsWith("sk_test_") &&
+      !stripeKey.startsWith("sk_live_")
+    ) {
+      toast.error("Invalid Stripe secret key format");
       return;
     }
 
     try {
       const config: StripeConfiguration = {
         secretKey: stripeKey,
-        allowedCountries: allowedCountries.split(',').map(c => c.trim()).filter(c => c.length > 0),
+        allowedCountries: allowedCountries
+          .split(",")
+          .map((c) => c.trim())
+          .filter((c) => c.length > 0),
       };
 
       await setStripeConfig.mutateAsync(config);
-      toast.success('Stripe configuration saved successfully!');
+      toast.success("Stripe configuration saved successfully!");
       setShowStripeSetup(false);
-      setStripeKey('');
+      setStripeKey("");
     } catch (error) {
-      console.error('Stripe setup error:', error);
-      toast.error('Failed to configure Stripe');
+      console.error("Stripe setup error:", error);
+      toast.error("Failed to configure Stripe");
     }
   };
 
-  const handleManualStatusChange = async (businessId: string, newStatus: BillingStatus) => {
+  const handleManualStatusChange = async (
+    businessId: string,
+    newStatus: BillingStatus,
+  ) => {
     try {
       await manuallySetStatus.mutateAsync({ businessId, status: newStatus });
       toast.success(`Billing status updated to ${newStatus}`);
     } catch (error) {
-      console.error('Status update error:', error);
-      toast.error('Failed to update billing status');
+      console.error("Status update error:", error);
+      toast.error("Failed to update billing status");
     }
   };
 
   const getBillingStatusBadge = (status: BillingStatus) => {
     if (status === BillingStatus.active) {
-      return <Badge variant="default" className="text-xs"><CheckCircle2 className="mr-1 h-3 w-3" />Active</Badge>;
+      return (
+        <Badge variant="default" className="text-xs">
+          <CheckCircle2 className="mr-1 h-3 w-3" />
+          Active
+        </Badge>
+      );
     }
     if (status === BillingStatus.grace) {
-      return <Badge variant="outline" className="text-xs border-yellow-500 text-yellow-500"><AlertTriangle className="mr-1 h-3 w-3" />Grace</Badge>;
+      return (
+        <Badge
+          variant="outline"
+          className="text-xs border-yellow-500 text-yellow-500"
+        >
+          <AlertTriangle className="mr-1 h-3 w-3" />
+          Grace
+        </Badge>
+      );
     }
     if (status === BillingStatus.restricted) {
-      return <Badge variant="destructive" className="text-xs"><XCircle className="mr-1 h-3 w-3" />Restricted</Badge>;
+      return (
+        <Badge variant="destructive" className="text-xs">
+          <XCircle className="mr-1 h-3 w-3" />
+          Restricted
+        </Badge>
+      );
     }
   };
 
   const formatTimestamp = (timestamp?: bigint) => {
-    if (!timestamp) return 'N/A';
+    if (!timestamp) return "N/A";
     const date = new Date(Number(timestamp));
-    return date.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return date.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -139,17 +179,23 @@ export default function AdminPage() {
 
   if (!isAdmin) return null;
 
-  const activeCount = billingRecords.filter(r => r.status === BillingStatus.active).length;
-  const graceCount = billingRecords.filter(r => r.status === BillingStatus.grace).length;
-  const restrictedCount = billingRecords.filter(r => r.status === BillingStatus.restricted).length;
+  const activeCount = billingRecords.filter(
+    (r) => r.status === BillingStatus.active,
+  ).length;
+  const graceCount = billingRecords.filter(
+    (r) => r.status === BillingStatus.grace,
+  ).length;
+  const restrictedCount = billingRecords.filter(
+    (r) => r.status === BillingStatus.restricted,
+  ).length;
 
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      
+
       <div className="flex-1 flex">
         <DashboardSidebar />
-        
+
         <main className="flex-1 p-8 overflow-auto">
           <div className="max-w-7xl mx-auto space-y-8">
             <div>
@@ -175,41 +221,57 @@ export default function AdminPage() {
                 <>
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
-                      <CardTitle className="text-sm font-medium">Total Businesses</CardTitle>
+                      <CardTitle className="text-sm font-medium">
+                        Total Businesses
+                      </CardTitle>
                       <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">{businesses.length}</div>
+                      <div className="text-2xl font-bold">
+                        {businesses.length}
+                      </div>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
-                      <CardTitle className="text-sm font-medium">Active Accounts</CardTitle>
+                      <CardTitle className="text-sm font-medium">
+                        Active Accounts
+                      </CardTitle>
                       <CheckCircle2 className="h-4 w-4 text-green-500" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold text-green-500">{activeCount}</div>
+                      <div className="text-2xl font-bold text-green-500">
+                        {activeCount}
+                      </div>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
-                      <CardTitle className="text-sm font-medium">Grace Period</CardTitle>
+                      <CardTitle className="text-sm font-medium">
+                        Grace Period
+                      </CardTitle>
                       <AlertTriangle className="h-4 w-4 text-yellow-500" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold text-yellow-500">{graceCount}</div>
+                      <div className="text-2xl font-bold text-yellow-500">
+                        {graceCount}
+                      </div>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
-                      <CardTitle className="text-sm font-medium">Restricted</CardTitle>
+                      <CardTitle className="text-sm font-medium">
+                        Restricted
+                      </CardTitle>
                       <XCircle className="h-4 w-4 text-destructive" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold text-destructive">{restrictedCount}</div>
+                      <div className="text-2xl font-bold text-destructive">
+                        {restrictedCount}
+                      </div>
                     </CardContent>
                   </Card>
                 </>
@@ -221,7 +283,9 @@ export default function AdminPage() {
               <CardHeader>
                 <CardTitle>Stripe Configuration</CardTitle>
                 <CardDescription>
-                  This connects IronGuard ICP's Stripe account for payment processing. This configuration is accessible only to the admin and is required once per platform.
+                  This connects IronGuard ICP's Stripe account for payment
+                  processing. This configuration is accessible only to the admin
+                  and is required once per platform.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -231,33 +295,46 @@ export default function AdminPage() {
                       <>
                         <CheckCircle2 className="h-6 w-6 text-green-500" />
                         <div>
-                          <p className="font-medium">Stripe Status: Configured</p>
-                          <p className="text-sm text-muted-foreground">Payment processing is active</p>
+                          <p className="font-medium">
+                            Stripe Status: Configured
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Payment processing is active
+                          </p>
                         </div>
                       </>
                     ) : (
                       <>
                         <XCircle className="h-6 w-6 text-destructive" />
                         <div>
-                          <p className="font-medium">Stripe Status: Not Configured</p>
-                          <p className="text-sm text-muted-foreground">Payment processing is disabled</p>
+                          <p className="font-medium">
+                            Stripe Status: Not Configured
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Payment processing is disabled
+                          </p>
                         </div>
                       </>
                     )}
                   </div>
-                  <Button 
+                  <Button
                     onClick={() => setShowStripeSetup(!showStripeSetup)}
                     variant={stripeConfigured ? "outline" : "default"}
                   >
                     <SettingsIcon className="mr-2 h-4 w-4" />
-                    {stripeConfigured ? 'Update Configuration' : 'Configure Stripe'}
+                    {stripeConfigured
+                      ? "Update Configuration"
+                      : "Configure Stripe"}
                   </Button>
                 </div>
 
                 {!stripeConfigured && (
                   <Alert>
                     <AlertDescription>
-                      Stripe must be configured before customers can make payments. This is a one-time setup that enables credit cards, debit cards, Apple Pay, Google Pay, and PayPal processing.
+                      Stripe must be configured before customers can make
+                      payments. This is a one-time setup that enables credit
+                      cards, debit cards, Apple Pay, Google Pay, and PayPal
+                      processing.
                     </AlertDescription>
                   </Alert>
                 )}
@@ -274,11 +351,15 @@ export default function AdminPage() {
                         placeholder="sk_test_... or sk_live_..."
                       />
                       <p className="text-xs text-muted-foreground">
-                        Enter your platform's Stripe secret key. Use test keys (sk_test_) for testing or live keys (sk_live_) for production.
+                        Enter your platform's Stripe secret key. Use test keys
+                        (sk_test_) for testing or live keys (sk_live_) for
+                        production.
                       </p>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="countries">Allowed Countries (comma-separated)</Label>
+                      <Label htmlFor="countries">
+                        Allowed Countries (comma-separated)
+                      </Label>
                       <Input
                         id="countries"
                         value={allowedCountries}
@@ -286,14 +367,23 @@ export default function AdminPage() {
                         placeholder="US,CA,GB,AU,DE,FR..."
                       />
                       <p className="text-xs text-muted-foreground">
-                        Specify which countries can make payments. Use ISO 3166-1 alpha-2 country codes.
+                        Specify which countries can make payments. Use ISO
+                        3166-1 alpha-2 country codes.
                       </p>
                     </div>
                     <div className="flex space-x-2">
-                      <Button onClick={handleStripeSetup} disabled={setStripeConfig.isPending}>
-                        {setStripeConfig.isPending ? 'Saving...' : 'Save Configuration'}
+                      <Button
+                        onClick={handleStripeSetup}
+                        disabled={setStripeConfig.isPending}
+                      >
+                        {setStripeConfig.isPending
+                          ? "Saving..."
+                          : "Save Configuration"}
                       </Button>
-                      <Button variant="outline" onClick={() => setShowStripeSetup(false)}>
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowStripeSetup(false)}
+                      >
                         Cancel
                       </Button>
                     </div>
@@ -307,7 +397,8 @@ export default function AdminPage() {
               <CardHeader>
                 <CardTitle>Failed Payment Recovery Management</CardTitle>
                 <CardDescription>
-                  Monitor and manage payment failures, retry attempts, and account billing states
+                  Monitor and manage payment failures, retry attempts, and
+                  account billing states
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -323,27 +414,31 @@ export default function AdminPage() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {billingRecords.map((record, index) => {
-                      const business = businesses.find(b => 
-                        identity?.getPrincipal().toString() === record.businessId || 
-                        b.businessName === record.businessId
+                    {billingRecords.map((record) => {
+                      const business = businesses.find(
+                        (b) =>
+                          identity?.getPrincipal().toString() ===
+                            record.businessId ||
+                          b.businessName === record.businessId,
                       );
-                      
+
                       return (
                         <div
-                          key={index}
+                          key={record.businessId}
                           className="p-4 border border-border rounded-lg space-y-3"
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <div className="flex items-center space-x-2 mb-1">
                                 <p className="font-medium">
-                                  {business?.businessName || record.businessId.substring(0, 20) + '...'}
+                                  {business?.businessName ||
+                                    `${record.businessId.substring(0, 20)}...`}
                                 </p>
                                 {getBillingStatusBadge(record.status)}
                               </div>
                               <p className="text-xs text-muted-foreground">
-                                Business ID: {record.businessId.substring(0, 30)}...
+                                Business ID:{" "}
+                                {record.businessId.substring(0, 30)}...
                               </p>
                             </div>
                           </div>
@@ -372,7 +467,9 @@ export default function AdminPage() {
                             <div className="flex items-start space-x-2">
                               <AlertTriangle className="h-4 w-4 text-muted-foreground mt-0.5" />
                               <div>
-                                <p className="font-medium">Grace Period Start</p>
+                                <p className="font-medium">
+                                  Grace Period Start
+                                </p>
                                 <p className="text-muted-foreground">
                                   {formatTimestamp(record.gracePeriodStart)}
                                 </p>
@@ -384,21 +481,38 @@ export default function AdminPage() {
                             <>
                               <Separator />
                               <div className="space-y-2">
-                                <p className="text-sm font-medium">Payment Failure Logs</p>
-                                {record.paymentFailureLogs.slice(0, 3).map((log, logIndex) => (
-                                  <div key={logIndex} className="text-xs p-2 bg-muted/50 rounded">
-                                    <div className="flex justify-between mb-1">
-                                      <span className="font-medium text-destructive">{log.reason}</span>
-                                      <span className="text-muted-foreground">
-                                        ${(Number(log.amount) / 100).toFixed(2)}
-                                      </span>
+                                <p className="text-sm font-medium">
+                                  Payment Failure Logs
+                                </p>
+                                {record.paymentFailureLogs
+                                  .slice(0, 3)
+                                  .map((log, logIndex) => (
+                                    <div
+                                      // biome-ignore lint/suspicious/noArrayIndexKey: log entries have no unique id
+                                      key={logIndex}
+                                      className="text-xs p-2 bg-muted/50 rounded"
+                                    >
+                                      <div className="flex justify-between mb-1">
+                                        <span className="font-medium text-destructive">
+                                          {log.reason}
+                                        </span>
+                                        <span className="text-muted-foreground">
+                                          $
+                                          {(Number(log.amount) / 100).toFixed(
+                                            2,
+                                          )}
+                                        </span>
+                                      </div>
+                                      <div className="flex justify-between text-muted-foreground">
+                                        <span>
+                                          Attempts: {log.attempts.toString()}
+                                        </span>
+                                        <span>
+                                          {formatTimestamp(log.timestamp)}
+                                        </span>
+                                      </div>
                                     </div>
-                                    <div className="flex justify-between text-muted-foreground">
-                                      <span>Attempts: {log.attempts.toString()}</span>
-                                      <span>{formatTimestamp(log.timestamp)}</span>
-                                    </div>
-                                  </div>
-                                ))}
+                                  ))}
                               </div>
                             </>
                           )}
@@ -409,24 +523,48 @@ export default function AdminPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => handleManualStatusChange(record.businessId, BillingStatus.active)}
-                              disabled={manuallySetStatus.isPending || record.status === BillingStatus.active}
+                              onClick={() =>
+                                handleManualStatusChange(
+                                  record.businessId,
+                                  BillingStatus.active,
+                                )
+                              }
+                              disabled={
+                                manuallySetStatus.isPending ||
+                                record.status === BillingStatus.active
+                              }
                             >
                               Set Active
                             </Button>
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => handleManualStatusChange(record.businessId, BillingStatus.grace)}
-                              disabled={manuallySetStatus.isPending || record.status === BillingStatus.grace}
+                              onClick={() =>
+                                handleManualStatusChange(
+                                  record.businessId,
+                                  BillingStatus.grace,
+                                )
+                              }
+                              disabled={
+                                manuallySetStatus.isPending ||
+                                record.status === BillingStatus.grace
+                              }
                             >
                               Set Grace
                             </Button>
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => handleManualStatusChange(record.businessId, BillingStatus.restricted)}
-                              disabled={manuallySetStatus.isPending || record.status === BillingStatus.restricted}
+                              onClick={() =>
+                                handleManualStatusChange(
+                                  record.businessId,
+                                  BillingStatus.restricted,
+                                )
+                              }
+                              disabled={
+                                manuallySetStatus.isPending ||
+                                record.status === BillingStatus.restricted
+                              }
                             >
                               Set Restricted
                             </Button>
@@ -451,7 +589,10 @@ export default function AdminPage() {
                 {businessesLoading ? (
                   <div className="space-y-2">
                     {[1, 2, 3].map((i) => (
-                      <div key={i} className="p-4 border border-border rounded-lg flex items-center justify-between">
+                      <div
+                        key={i}
+                        className="p-4 border border-border rounded-lg flex items-center justify-between"
+                      >
                         <div className="flex-1 space-y-2">
                           <div className="h-4 w-48 bg-muted rounded animate-pulse" />
                           <div className="h-3 w-64 bg-muted rounded animate-pulse" />
@@ -466,15 +607,16 @@ export default function AdminPage() {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    {businesses.map((business, index) => (
+                    {businesses.map((business) => (
                       <div
-                        key={index}
+                        key={business.businessName}
                         className="p-4 border border-border rounded-lg flex items-center justify-between"
                       >
                         <div>
                           <p className="font-medium">{business.businessName}</p>
                           <p className="text-sm text-muted-foreground">
-                            {business.industry} • {business.size} • {business.subscriptionTier}
+                            {business.industry} • {business.size} •{" "}
+                            {business.subscriptionTier}
                           </p>
                         </div>
                         <div className="text-sm text-muted-foreground">

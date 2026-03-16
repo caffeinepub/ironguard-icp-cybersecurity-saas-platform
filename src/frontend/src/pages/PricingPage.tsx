@@ -1,105 +1,111 @@
-import { Link } from '@tanstack/react-router';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, Shield, Lock, Database, FileCheck, Users } from 'lucide-react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Link } from "@tanstack/react-router";
+import { Check, Database, FileCheck, Lock, Shield, Users } from "lucide-react";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
 
-type TierAccent = 'starter' | 'growth' | 'enterprise' | 'custom';
+type TierAccent = "starter" | "growth" | "enterprise" | "custom";
 
 const tiers = [
   {
-    name: 'Starter',
-    subtitle: 'Small Business',
-    price: '$49',
-    period: '/month',
-    storage: '10GB included',
-    overage: '$0.50/GB additional',
-    description: 'For small businesses and individuals',
+    name: "Starter",
+    subtitle: "Small Business",
+    price: "$49",
+    period: "/month",
+    storage: "10GB included",
+    overage: "$0.50/GB additional",
+    description: "For small businesses and individuals",
     features: [
-      'Zero-knowledge encryption',
-      'ICP/NNS authentication',
-      'Basic audit logs',
-      'Email support',
-      'API access',
-      'Single team member',
+      "Zero-knowledge encryption",
+      "ICP/NNS authentication",
+      "Basic audit logs",
+      "Email support",
+      "API access",
+      "Single team member",
     ],
-    cta: 'Get Started',
-    ctaLink: '/auth',
-    ctaVariant: 'outline' as const,
-    accent: 'starter' as TierAccent,
+    cta: "Get Started",
+    ctaLink: "/auth",
+    ctaVariant: "outline" as const,
+    accent: "starter" as TierAccent,
   },
   {
-    name: 'Growth',
-    subtitle: 'Mid-Size Business',
-    price: '$199',
-    period: '/month',
-    storage: '50GB included',
-    overage: '$0.40/GB additional',
-    description: 'For growing teams',
+    name: "Growth",
+    subtitle: "Mid-Size Business",
+    price: "$199",
+    period: "/month",
+    storage: "50GB included",
+    overage: "$0.40/GB additional",
+    description: "For growing teams",
     features: [
-      'Everything in Starter',
-      'Advanced authentication',
-      'Complete audit logs',
-      'Priority support',
-      'Full API access',
-      'Up to 10 team members',
-      'Real-time analytics',
-      'Custom integrations',
+      "Everything in Starter",
+      "Advanced authentication",
+      "Complete audit logs",
+      "Priority support",
+      "Full API access",
+      "Up to 10 team members",
+      "Real-time analytics",
+      "Custom integrations",
     ],
-    cta: 'Get Started',
-    ctaLink: '/auth',
-    ctaVariant: 'default' as const,
+    cta: "Get Started",
+    ctaLink: "/auth",
+    ctaVariant: "default" as const,
     popular: true,
-    accent: 'growth' as TierAccent,
+    accent: "growth" as TierAccent,
   },
   {
-    name: 'Enterprise',
-    subtitle: 'Large Organizations',
-    price: '$499–$999',
-    period: '/month',
-    storage: '200GB included',
-    overage: '$0.30/GB additional',
-    description: 'For enterprises',
+    name: "Enterprise",
+    subtitle: "Large Organizations",
+    price: "$499–$999",
+    period: "/month",
+    storage: "200GB included",
+    overage: "$0.30/GB additional",
+    description: "For enterprises",
     features: [
-      'Everything in Growth',
-      'Enterprise SSO',
-      'Immutable audit logs',
-      '24/7 dedicated support',
-      'Advanced API features',
-      'Unlimited team members',
-      'Custom compliance reports',
-      'SLA guarantees',
-      'Dedicated account manager',
-      'Multi-region redundancy',
+      "Everything in Growth",
+      "Enterprise SSO",
+      "Immutable audit logs",
+      "24/7 dedicated support",
+      "Advanced API features",
+      "Unlimited team members",
+      "Custom compliance reports",
+      "SLA guarantees",
+      "Dedicated account manager",
+      "Multi-region redundancy",
     ],
-    cta: 'Contact Sales',
-    ctaLink: '/support',
-    ctaVariant: 'outline' as const,
-    accent: 'enterprise' as TierAccent,
+    cta: "Contact Sales",
+    ctaLink: "/support",
+    ctaVariant: "outline" as const,
+    accent: "enterprise" as TierAccent,
   },
   {
-    name: 'Custom / Government',
-    subtitle: '',
-    price: '$2,000–$10,000',
-    period: '/month',
-    storage: 'Custom storage',
-    overage: '',
-    description: 'Custom solutions for government and large enterprises',
+    name: "Custom / Government",
+    subtitle: "",
+    price: "$2,000–$10,000",
+    period: "/month",
+    storage: "Custom storage",
+    overage: "",
+    description: "Custom solutions for government and large enterprises",
     features: [
-      'Custom storage allocation',
-      'Government-grade security',
-      'On-premise deployment options',
-      'White-glove support',
-      'Custom feature development',
-      'Advanced compliance',
-      'Multi-region redundancy',
-      'Custom SLAs',
+      "Custom storage allocation",
+      "Government-grade security",
+      "On-premise deployment options",
+      "White-glove support",
+      "Custom feature development",
+      "Advanced compliance",
+      "Multi-region redundancy",
+      "Custom SLAs",
     ],
-    cta: 'Request Consultation',
-    ctaLink: '/support',
-    ctaVariant: 'outline' as const,
-    accent: 'custom' as TierAccent,
+    cta: "Request Consultation",
+    ctaLink: "/support",
+    ctaVariant: "outline" as const,
+    accent: "custom" as TierAccent,
   },
 ];
 
@@ -107,7 +113,7 @@ export default function PricingPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      
+
       <main className="flex-1 py-16 md:py-24">
         <div className="container">
           {/* Header Section */}
@@ -116,7 +122,8 @@ export default function PricingPage() {
               Predictable, Enterprise-Ready Pricing
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-              Straightforward platform pricing with usage-based storage. No hidden fees.
+              Straightforward platform pricing with usage-based storage. No
+              hidden fees.
             </p>
           </div>
 
@@ -129,15 +136,15 @@ export default function PricingPage() {
                   pricing-tier-card
                   pricing-tier-${tier.accent}
                   relative flex flex-col border
-                  ${tier.popular ? 'border-primary shadow-lg' : 'border-border/60'}
+                  ${tier.popular ? "border-primary shadow-lg" : "border-border/60"}
                   bg-card
                   transition-all duration-300 ease-out
                   hover:shadow-glass-md hover:-translate-y-1
                   group
-                  ${tier.popular ? 'pt-8' : ''}
+                  ${tier.popular ? "pt-8" : ""}
                 `}
                 style={{
-                  willChange: 'transform, box-shadow',
+                  willChange: "transform, box-shadow",
                 }}
               >
                 {tier.popular && (
@@ -147,9 +154,13 @@ export default function PricingPage() {
                 )}
                 <CardHeader className="space-y-4 pb-6 relative z-10">
                   <div className="space-y-1">
-                    <CardTitle className="text-2xl font-bold">{tier.name}</CardTitle>
+                    <CardTitle className="text-2xl font-bold">
+                      {tier.name}
+                    </CardTitle>
                     {tier.subtitle && (
-                      <p className="text-sm text-muted-foreground font-medium">{tier.subtitle}</p>
+                      <p className="text-sm text-muted-foreground font-medium">
+                        {tier.subtitle}
+                      </p>
                     )}
                   </div>
                   <div className="space-y-2">
@@ -157,12 +168,18 @@ export default function PricingPage() {
                       <span className="text-3xl md:text-4xl font-bold text-foreground">
                         {tier.price}
                       </span>
-                      <span className="text-muted-foreground text-base">{tier.period}</span>
+                      <span className="text-muted-foreground text-base">
+                        {tier.period}
+                      </span>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-foreground">{tier.storage}</p>
+                      <p className="text-sm font-medium text-foreground">
+                        {tier.storage}
+                      </p>
                       {tier.overage && (
-                        <p className="text-sm text-muted-foreground">{tier.overage}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {tier.overage}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -175,7 +192,9 @@ export default function PricingPage() {
                     {tier.features.map((feature) => (
                       <li key={feature} className="flex items-start space-x-3">
                         <Check className="h-4 w-4 text-foreground/70 flex-shrink-0 mt-0.5" />
-                        <span className="text-sm leading-relaxed">{feature}</span>
+                        <span className="text-sm leading-relaxed">
+                          {feature}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -206,11 +225,13 @@ export default function PricingPage() {
               </h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p className="text-base md:text-lg">
-                  Storage is billed monthly based on actual usage. Each tier includes a base storage allocation, 
-                  with transparent per-GB pricing for additional capacity.
+                  Storage is billed monthly based on actual usage. Each tier
+                  includes a base storage allocation, with transparent per-GB
+                  pricing for additional capacity.
                 </p>
                 <p className="text-base md:text-lg">
-                  No hidden fees. No storage minimums. Pay only for what you use.
+                  No hidden fees. No storage minimums. Pay only for what you
+                  use.
                 </p>
               </div>
             </div>
@@ -226,31 +247,41 @@ export default function PricingPage() {
                 <div className="text-center space-y-3">
                   <Shield className="h-10 w-10 mx-auto text-foreground/70" />
                   <p className="text-sm font-medium leading-tight">
-                    Zero-Knowledge<br />Encryption
+                    Zero-Knowledge
+                    <br />
+                    Encryption
                   </p>
                 </div>
                 <div className="text-center space-y-3">
                   <Lock className="h-10 w-10 mx-auto text-foreground/70" />
                   <p className="text-sm font-medium leading-tight">
-                    Cryptographic Identity<br />(ICP/NNS)
+                    Cryptographic Identity
+                    <br />
+                    (ICP/NNS)
                   </p>
                 </div>
                 <div className="text-center space-y-3">
                   <Database className="h-10 w-10 mx-auto text-foreground/70" />
                   <p className="text-sm font-medium leading-tight">
-                    Immutable Audit<br />Logging
+                    Immutable Audit
+                    <br />
+                    Logging
                   </p>
                 </div>
                 <div className="text-center space-y-3">
                   <Users className="h-10 w-10 mx-auto text-foreground/70" />
                   <p className="text-sm font-medium leading-tight">
-                    Enterprise<br />Controls
+                    Enterprise
+                    <br />
+                    Controls
                   </p>
                 </div>
                 <div className="text-center space-y-3 col-span-2 md:col-span-1">
                   <FileCheck className="h-10 w-10 mx-auto text-foreground/70" />
                   <p className="text-sm font-medium leading-tight">
-                    Compliance<br />Readiness
+                    Compliance
+                    <br />
+                    Readiness
                   </p>
                 </div>
               </div>
@@ -260,8 +291,11 @@ export default function PricingPage() {
           {/* Bottom CTA */}
           <div className="mt-16 text-center space-y-4">
             <p className="text-muted-foreground text-base">
-              Questions about pricing or need a custom solution?{' '}
-              <Link to="/support" className="text-foreground hover:underline font-medium">
+              Questions about pricing or need a custom solution?{" "}
+              <Link
+                to="/support"
+                className="text-foreground hover:underline font-medium"
+              >
                 Contact our team
               </Link>
             </p>
