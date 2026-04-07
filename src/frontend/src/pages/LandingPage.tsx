@@ -33,7 +33,7 @@ export default function LandingPage() {
                 logs, and cryptographic identity—without exposing your data or
                 private keys.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+              <div className="flex flex-col sm:flex-row items-center gap-3 justify-center pt-4">
                 <Link to="/auth">
                   <Button
                     size="lg"
@@ -236,11 +236,11 @@ export default function LandingPage() {
 
         {/* Final CTA Section */}
         <section className="py-20 md:py-28">
-          <div className="container text-center space-y-6 max-w-3xl mx-auto">
+          <div className="container text-center max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
               Get Started with IronGuard ICP
             </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+            <p className="text-lg text-muted-foreground leading-relaxed mt-4 mb-8">
               Deploy enterprise-grade security and encrypted data hosting in
               minutes.
             </p>

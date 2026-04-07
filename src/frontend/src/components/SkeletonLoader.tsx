@@ -1,5 +1,8 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
+const SKELETON_ROWS_3 = ["a", "b", "c"];
+const SKELETON_ROWS_4 = ["a", "b", "c", "d"];
+
 // Dashboard Widget Skeleton
 export function DashboardWidgetSkeleton() {
   return (
@@ -50,8 +53,8 @@ export function BillingSummarySkeleton() {
       </div>
       <Skeleton className="h-px w-full" />
       <div className="grid md:grid-cols-3 gap-6">
-        {[1, 2, 3].map((i) => (
-          <div key={`row-${i}`} className="flex items-start space-x-3">
+        {SKELETON_ROWS_3.map((key) => (
+          <div key={key} className="flex items-start space-x-3">
             <Skeleton className="h-5 w-5 rounded mt-0.5" />
             <div className="space-y-2 flex-1">
               <Skeleton className="h-4 w-28" />
@@ -68,9 +71,9 @@ export function BillingSummarySkeleton() {
 export function ActivityLogSkeleton() {
   return (
     <div className="space-y-3">
-      {[1, 2, 3, 4].map((i) => (
+      {SKELETON_ROWS_4.map((key) => (
         <div
-          key={`row-${i}`}
+          key={key}
           className="flex items-start space-x-3 p-3 border border-border rounded-lg"
         >
           <Skeleton className="h-10 w-10 rounded-full" />
@@ -86,10 +89,11 @@ export function ActivityLogSkeleton() {
 
 // Card Content Skeleton (Generic)
 export function CardContentSkeleton({ rows = 3 }: { rows?: number }) {
+  const keys = ["a", "b", "c", "d", "e", "f", "g", "h"].slice(0, rows);
   return (
     <div className="space-y-3">
-      {Array.from({ length: rows }, (_, i) => (
-        <div key={`skeleton-row-${i}`} className="space-y-2">
+      {keys.map((key) => (
+        <div key={key} className="space-y-2">
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-5/6" />
         </div>
@@ -113,8 +117,8 @@ export function BillingRecordSkeleton() {
       </div>
       <Skeleton className="h-px w-full" />
       <div className="grid md:grid-cols-3 gap-4">
-        {[1, 2, 3].map((i) => (
-          <div key={`row-${i}`} className="flex items-start space-x-2">
+        {SKELETON_ROWS_3.map((key) => (
+          <div key={key} className="flex items-start space-x-2">
             <Skeleton className="h-4 w-4 rounded mt-0.5" />
             <div className="space-y-2 flex-1">
               <Skeleton className="h-4 w-24" />
